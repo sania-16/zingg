@@ -1,26 +1,22 @@
-package zingg.spark.core.preprocess.caseNormalize;
+package zingg.spark.core.preprocess.casenormalize;
 
 import org.apache.spark.sql.Column;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.types.DataType;
-import scala.collection.JavaConverters;
-import scala.collection.Seq;
 import zingg.common.client.FieldDefinition;
 import zingg.common.client.ZFrame;
 import zingg.common.core.context.IContext;
-import zingg.common.core.preprocess.caseNormalize.CaseNormalizer;
-import zingg.spark.client.SparkFrame;
+import zingg.common.core.preprocess.casenormalize.CaseNormalizer;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.apache.spark.sql.functions.lower;
 
 public class SparkCaseNormalizer extends CaseNormalizer<SparkSession, Dataset<Row>, Row, Column, DataType> {
     private static final long serialVersionUID = 1L;
-    protected static String name = "zingg.spark.core.preprocess.caseNormalize.SparkCaseNormalizer";
+    protected static String name = "zingg.spark.core.preprocess.casenormalize.SparkCaseNormalizer";
 
     public SparkCaseNormalizer() {
         super();
@@ -32,16 +28,13 @@ public class SparkCaseNormalizer extends CaseNormalizer<SparkSession, Dataset<Ro
     @Override
     protected ZFrame<Dataset<Row>, Row, Column> applyCaseNormalizer(ZFrame<Dataset<Row>, Row, Column> incomingDataFrame, List<String> relevantFields) {
         String[] incomingDFColumns = incomingDataFrame.columns();
-        Seq<String> columnsSeq = JavaConverters.asScalaIteratorConverter(relevantFields.iterator())
-                .asScala()
-                .toSeq();
-        List<Column> caseNormalizedValues = new ArrayList<>();
-        for (String relevantField : relevantFields) {
-            caseNormalizedValues.add(lower(incomingDataFrame.col(relevantField)));
+        Column[] caseNormalizedValues = new Column[relevantFields.size()];
+        String[] relevantFieldsArray = new String[relevantFields.size()];
+        for (int idx = 0; idx < relevantFields.size(); idx++) {
+            caseNormalizedValues[idx] = lower(incomingDataFrame.col(relevantFields.get(idx)));
+            relevantFieldsArray[idx] = relevantFields.get(idx);
         }
-        Seq<Column> caseNormalizedSeq = JavaConverters.asScalaIteratorConverter(caseNormalizedValues.iterator())
-                .asScala()
-                .toSeq();
-        return new SparkFrame(incomingDataFrame.df().withColumns(columnsSeq, caseNormalizedSeq)).select(incomingDFColumns);
+
+        return incomingDataFrame.withColumns(relevantFieldsArray, caseNormalizedValues).select(incomingDFColumns);
     }
 }

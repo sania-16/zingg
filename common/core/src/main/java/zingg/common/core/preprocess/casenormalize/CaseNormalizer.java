@@ -1,11 +1,10 @@
-package zingg.common.core.preprocess.caseNormalize;
+package zingg.common.core.preprocess.casenormalize;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import zingg.common.client.FieldDefinition;
 import zingg.common.client.MatchTypes;
 import zingg.common.client.ZFrame;
-import zingg.common.client.ZinggClientException;
 import zingg.common.core.context.IContext;
 import zingg.common.core.preprocess.IMultiFieldPreprocessor;
 
@@ -16,7 +15,7 @@ public abstract class CaseNormalizer<S,D,R,C,T> implements IMultiFieldPreprocess
 
     private static final long serialVersionUID = 1L;
     private static final String STRING_TYPE = "string";
-    protected static String name = "zingg.common.core.preprocess.caseNormalize.CaseNormalizer";
+    protected static String name = "zingg.common.core.preprocess.casenormalize.CaseNormalizer";
     public static final Log LOG = LogFactory.getLog(CaseNormalizer.class);
 
     private IContext<S, D, R, C, T> context;

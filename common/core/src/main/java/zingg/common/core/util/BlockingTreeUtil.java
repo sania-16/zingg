@@ -18,12 +18,9 @@ import zingg.common.client.util.Util;
 import zingg.common.core.block.Block;
 import zingg.common.core.block.Canopy;
 import zingg.common.core.block.Tree;
-import zingg.common.core.data.AData;
-import zingg.common.core.data.impl.BlockedData;
 import zingg.common.core.hash.HashFunction;
-import zingg.common.core.processor.IProcessor;
 
-public abstract class BlockingTreeUtil<S, D,R,C,T> implements IProcessor<S, D, R, C, T> {
+public abstract class BlockingTreeUtil<S, D,R,C,T> {
 
     public final Log LOG = LogFactory.getLog(BlockingTreeUtil.class);
 
@@ -119,14 +116,5 @@ public abstract class BlockingTreeUtil<S, D,R,C,T> implements IProcessor<S, D, R
 	public abstract ZFrame<D,R,C> getBlockHashes(ZFrame<D,R,C> testData, Tree<Canopy<R>> tree);
 	//.map(new Block<D,R,C,T>().BlockFunction(tree), RowEncoder.apply(Block<D,R,C,T>.appendHashCol(sample.schema())));
 
-	@Override
-	public AData<D, R, C> process(AData<D, R, C> data) {
-		List<ZFrame<D, R, C>> blockedZFrames = new ArrayList<>();
-		List<ZFrame<D, R, C>> zFrames = data.getzFrames();
-		for (ZFrame<D, R, C> zFrame : zFrames) {
-			blockedZFrames.add(getBlockHashes(zFrame, tree));
-		}
-		return new BlockedData<>(blockedZFrames);
-	}
 
 }

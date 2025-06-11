@@ -3,19 +3,13 @@ package zingg.common.core.processor.impl;
 import zingg.common.client.IArguments;
 import zingg.common.client.ZFrame;
 import zingg.common.client.cols.ZidAndFieldDefSelector;
-import zingg.common.core.data.AData;
-import zingg.common.core.data.impl.CompressedData;
-import zingg.common.core.processor.ASequentialProcessor;
-import zingg.common.core.processor.enums.ProcessingType;
+import zingg.common.core.processor.AZFrameProcessor;
 
-import java.util.List;
-
-public class FieldSelector<S, D, R, C, T> extends ASequentialProcessor<S, D, R, C, T> {
+public class FieldSelector<S, D, R, C, T> extends AZFrameProcessor<D, R, C> {
 
     private final IArguments arguments;
 
     public FieldSelector(IArguments arguments) {
-        super(ProcessingType.FIELD_SELECTOR);
         this.arguments = arguments;
     }
 
@@ -26,8 +20,4 @@ public class FieldSelector<S, D, R, C, T> extends ASequentialProcessor<S, D, R, 
         return zFrame.select(cols);
     }
 
-    @Override
-    public AData<D, R, C> getProcessedOutput(List<ZFrame<D, R, C>> zFrames) {
-        return new CompressedData<>(zFrames);
-    }
 }

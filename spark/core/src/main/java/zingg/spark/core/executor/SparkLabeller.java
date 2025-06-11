@@ -54,6 +54,6 @@ public class SparkLabeller extends Labeller<SparkSession, Dataset<Row>, Row, Col
     super.init(args,s,options);
     getContext().init(s);
   }
-	
-	
+
+
 }

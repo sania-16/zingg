@@ -10,14 +10,14 @@ import zingg.common.client.ZFrame;
 import zingg.common.client.ZinggClientException;
 import zingg.common.core.ZinggException;
 import zingg.common.core.context.IContext;
-import zingg.common.core.data.AData;
+import zingg.common.core.data.Data;
 import zingg.common.core.data.impl.PreprocessedData;
-import zingg.common.core.processor.IProcessor;
+import zingg.common.core.processor.IDataProcessor;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public interface IPreprocessors<S,D,R,C,T> extends INeedsPreprocMap<S,D,R,C,T>, INeedsPreprocOrder, IProcessor<S, D, R, C, T> {
+public interface IPreprocessors<S,D,R,C,T> extends INeedsPreprocMap<S,D,R,C,T>, INeedsPreprocOrder, IDataProcessor<S, D, R, C, T> {
 
     public static final Log LOG = LogFactory.getLog(IPreprocessors.class);
     
@@ -61,7 +61,7 @@ public interface IPreprocessors<S,D,R,C,T> extends INeedsPreprocMap<S,D,R,C,T>, 
     }
 
     @Override
-    default AData<D, R, C> process(AData<D, R, C> data) throws ZinggClientException, Exception {
+    default Data<D, R, C> process(Data<D, R, C> data) throws ZinggClientException, Exception {
         List<ZFrame<D, R, C>> zFrames = data.getzFrames();
         List<ZFrame<D, R, C>> preProcessedZFrames = new ArrayList<>();
         for (ZFrame<D, R, C> zFrame : zFrames) {

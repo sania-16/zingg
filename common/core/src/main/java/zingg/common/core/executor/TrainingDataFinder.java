@@ -16,7 +16,7 @@ import zingg.common.core.model.Model;
 import zingg.common.core.preprocess.IPreprocessors;
 import zingg.common.core.preprocess.stopwords.StopWordsRemover;
 
-public abstract class TrainingDataFinder<S,D,R,C,T> extends ZinggBase<S,D,R,C,T> implements IPreprocessors<S,D,R,C,T>{
+public abstract class TrainingDataFinder<S,D,R,C,T> extends ZinggBase<S,D,R,C,T> implements IPreprocessors<S,D,R,C,T> {
 
 	private static final long serialVersionUID = 1L;
 	protected static String name = "zingg.TrainingDataFinder";

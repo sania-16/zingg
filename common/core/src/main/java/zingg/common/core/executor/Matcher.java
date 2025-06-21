@@ -16,6 +16,9 @@ import zingg.common.client.util.ColName;
 import zingg.common.core.block.Blocker;
 import zingg.common.core.block.IBlocker;
 import zingg.common.core.block.InputDataGetter;
+import zingg.common.core.data.Data;
+import zingg.common.core.data.DataManager;
+import zingg.common.core.data.DataManagerImpl;
 import zingg.common.core.filter.IFilter;
 import zingg.common.core.filter.PredictionFilter;
 import zingg.common.core.match.data.IDataGetter;
@@ -26,6 +29,10 @@ import zingg.common.core.pairs.IPairBuilder;
 import zingg.common.core.pairs.SelfPairBuilder;
 import zingg.common.core.preprocess.IPreprocessors;
 import zingg.common.core.preprocess.stopwords.StopWordsRemover;
+import zingg.common.core.transformer.IDataTransformer;
+import zingg.common.core.transformer.IDataZFrameTransformer;
+import zingg.common.core.transformer.IZFrameTransformer;
+import zingg.common.core.transformer.impl.BlockTransformer;
 import zingg.common.core.util.Analytics;
 import zingg.common.core.util.Metric;
 
@@ -148,9 +155,9 @@ public abstract class Matcher<S,D,R,C,T> extends ZinggBase<S,D,R,C,T> implements
 		return dupes;
 	}
 
-	protected ZFrame<D,R,C> getActualDupes(ZFrame<D,R,C> blocked, ZFrame<D,R,C> testData) throws Exception, ZinggClientException{
-		return getActualDupes(blocked, testData, getPredictionFilter(), getIPairBuilder(), getPredictionColsSelector());
-	}
+//	protected ZFrame<D,R,C> getActualDupes(ZFrame<D,R,C> blocked, ZFrame<D,R,C> testData) throws Exception, ZinggClientException{
+//		return getActualDupes(blocked, testData, getPredictionFilter(), getIPairBuilder(), getPredictionColsSelector());
+//	}
 
 	public ISelectedCols getPredictionColsSelector(){
 		if (predictionColsSelector == null) {
@@ -185,24 +192,42 @@ public abstract class Matcher<S,D,R,C,T> extends ZinggBase<S,D,R,C,T> implements
 			long count = testData.count();
 			LOG.info("Read " + count);
 			Analytics.track(Metric.DATA_COUNT, count, args.getCollectMetrics());
+			IDataTransformer<S, D, R, C, T> hashTransformer = null;
+			Data<D, R, C> blockedData = hashTransformer.transform(DataManagerImpl.createData(testData));
 
-			ZFrame<D,R,C>blocked = getBlocked(testData);
-			LOG.info("Blocked ");
-			if (LOG.isDebugEnabled()) {
-				LOG.debug("Num distinct hashes " + blocked.select(ColName.HASH_COL).distinct().count());
-				blocked.show();
+			IDataZFrameTransformer<D, R, C> blockTransformer = null;
+			ZFrame<D, R, C> blocks = blockTransformer.transform(blockedData);
+
+			IZFrameTransformer<D, R, C> predictionTransformer = null;
+			ZFrame<D, R, C> predictedFrame = predictionTransformer.transform(blocks);
+
+			ZFrame<D, R, C> filteredData = predictionFilter.filter(predictedFrame);
+			if(getPredictionColsSelector()!=null) {
+				filteredData = filteredData.select(getPredictionColsSelector().getCols());
 			}
-			//LOG.warn("Num distinct hashes " + blocked.agg(functions.approx_count_distinct(ColName.HASH_COL)).count());
-			ZFrame<D,R,C> dupesActual = getActualDupes(blocked, testData);
+			IDataZFrameTransformer<D, R, C> outputTransformer = null;
+			ZFrame<D, R, C> identityGraph = outputTransformer.transform(DataManagerImpl.createData(testDataOriginal, filteredData));
+
+			setOutput(identityGraph);
+			if (args.getOutput() != null && toWrite) {
+				getPipeUtil().write(identityGraph, args.getOutput());
+			}
+//			ZFrame<D,R,C>blocked = getBlocked(testData);
+//			LOG.info("Blocked ");
+//			if (LOG.isDebugEnabled()) {
+//				LOG.debug("Num distinct hashes " + blocked.select(ColName.HASH_COL).distinct().count());
+//				blocked.show();
+//			}
+//			//LOG.warn("Num distinct hashes " + blocked.agg(functions.approx_count_distinct(ColName.HASH_COL)).count());
+//			ZFrame<D,R,C> dupesActual = getActualDupes(blocked, testData);
 			
 			//dupesActual.explain();
 			//dupesActual.toJavaRDD().saveAsTextFile("/tmp/zdupes");
 			
-			writeOutput(testDataOriginal, dupesActual);		
+//			writeOutput(testDataOriginal, dupesActual);
 			
 		} catch (Exception e) {
 			if (LOG.isDebugEnabled()) e.printStackTrace();
-			e.printStackTrace();
 			throw new ZinggClientException(e.getMessage());
 		}
     }
@@ -211,30 +236,30 @@ public abstract class Matcher<S,D,R,C,T> extends ZinggBase<S,D,R,C,T> implements
 		this.matchOutputBuilder = o;
 	}
 
-	public IMatchOutputBuilder<S,D,R,C> getMatchOutputBuilder(){
-		if (this.matchOutputBuilder == null) {
-			this.matchOutputBuilder = new GraphMatchOutputBuilder<S,D,R,C>(getGraphUtil(), getDSUtil(), (IArguments) args);
-		}
-		return this.matchOutputBuilder;
-	}
+//	public IMatchOutputBuilder<S,D,R,C> getMatchOutputBuilder(){
+//		if (this.matchOutputBuilder == null) {
+//			this.matchOutputBuilder = new GraphMatchOutputBuilder<S,D,R,C>(getGraphUtil(), getDSUtil(), (IArguments) args);
+//		}
+//		return this.matchOutputBuilder;
+//	}
 
 	
-	public void writeOutput( ZFrame<D,R,C>  testDataOriginal,  ZFrame<D,R,C>  dupesActual) throws ZinggClientException {
-		try{
-		//input dupes are pairs
-		///pick ones according to the threshold by user
-		//all clusters consolidated in one place
-		ZFrame<D, R, C> graphWithScores = getMatchOutputBuilder().getOutput(testDataOriginal, dupesActual);
-		setOutput(graphWithScores);
-		if (args.getOutput() != null && toWrite) {
-				getPipeUtil().write(graphWithScores, args.getOutput());
-		}
-		}
-		catch(Exception e) {
-			e.printStackTrace(); 
-		}
-		
-	}
+//	public void writeOutput(ZFrame<D,R,C> testDataOriginal, ZFrame<D,R,C>  dupesActual) throws ZinggClientException {
+//		try{
+//		//input dupes are pairs
+//		///pick ones according to the threshold by user
+//		//all clusters consolidated in one place
+//		ZFrame<D, R, C> graphWithScores = getMatchOutputBuilder().getOutput(testDataOriginal, dupesActual);
+//		setOutput(graphWithScores);
+//		if (args.getOutput() != null && toWrite) {
+//				getPipeUtil().write(graphWithScores, args.getOutput());
+//		}
+//		}
+//		catch(Exception e) {
+//			e.printStackTrace();
+//		}
+//
+//	}
 
 	
     protected abstract StopWordsRemover<S,D,R,C,T> getStopWords();

@@ -19,6 +19,7 @@ import zingg.common.client.util.ColName;
 //Dataset, Row, column
 public class SparkFrame implements ZFrame<Dataset<Row>, Row, Column> {
 
+    private String name;
 	public Dataset<Row> df;
 	
     public SparkFrame(Dataset<Row> df) {
@@ -28,7 +29,17 @@ public class SparkFrame implements ZFrame<Dataset<Row>, Row, Column> {
     public Dataset<Row> df() {
         return df;
     }
-    
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
     public ZFrame<Dataset<Row>, Row, Column> cache() {
         return new SparkFrame(df.cache());
     }

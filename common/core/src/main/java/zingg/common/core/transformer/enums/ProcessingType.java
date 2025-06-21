@@ -1,4 +1,4 @@
-package zingg.common.core.processor.enums;
+package zingg.common.core.transformer.enums;
 
 public enum ProcessingType {
     FIELD_SELECTOR,

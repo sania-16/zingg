@@ -41,10 +41,9 @@ public abstract class TrainingDataFinder<S,D,R,C,T> extends ZinggBase<S,D,R,C,T>
 				LOG.warn("Read input data " + data.count());
 				LOG.debug("input data schema is " +data.showSchema());
 				//create 20 pos pairs
-
 				ZFrame<D,R,C> posPairs = null;
 				ZFrame<D,R,C> negPairs = null;
-				ZFrame<D,R,C> trFile = getTraining();					
+				ZFrame<D,R,C> trFile = getTraining();
 
 				if (trFile != null) {
 					trFile = preprocess(trFile).cache();

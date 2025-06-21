@@ -6,8 +6,15 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 
-public abstract class Data<D, R, C> {
+/**
+ * Extend this class by the corresponding
+ * @param <D>
+ * @param <R>
+ * @param <C>
+ */
+public class Data<D, R, C> {
     private String name;
     private final long timestamp;
 
@@ -33,8 +40,21 @@ public abstract class Data<D, R, C> {
         return count;
     }
 
+    public ZFrame<D, R, C> getZFrameByName(String name) {
+        for (ZFrame<D, R, C> zFrame : zFrames) {
+            if (name.equalsIgnoreCase(zFrame.getName())) {
+                return zFrame;
+            }
+        }
+        throw new NoSuchElementException("No ZFrame found with name " + name);
+    }
+
     public List<ZFrame<D, R, C>> getzFrames() {
         return this.zFrames;
+    }
+
+    public int getNumberOfZFrames() {
+        return zFrames.size();
     }
 
     public void cache() {

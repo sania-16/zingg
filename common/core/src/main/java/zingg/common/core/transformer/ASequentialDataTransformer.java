@@ -1,36 +1,34 @@
-package zingg.common.core.processor;
+package zingg.common.core.transformer;
 
 import zingg.common.client.ZFrame;
+import zingg.common.client.ZinggClientException;
 import zingg.common.core.data.Data;
 import zingg.common.core.queue.DataQueue;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ASequentialDataProcessor<S, D, R, C, T> implements IDataProcessor<S, D, R, C, T> {
+public abstract class ASequentialDataTransformer<S, D, R, C, T> implements IDataTransformer<S, D, R, C, T> {
 
     private final List<DataQueue<D, R, C>> queues;
-    private final AZFrameProcessor<D, R, C> zFrameProcessor;
 
-    public ASequentialDataProcessor(AZFrameProcessor<D, R, C> zFrameProcessor) {
+    public ASequentialDataTransformer() {
         this.queues = new ArrayList<>();
-        this.zFrameProcessor = zFrameProcessor;
     }
 
     @Override
-    public Data<D, R, C> process(Data<D, R, C> data) {
+    public Data<D, R, C> transform(Data<D, R, C> data) throws ZinggClientException, Exception {
         List<ZFrame<D, R, C>> zFrames = data.getzFrames();
         List<ZFrame<D, R, C>> processedZFrames = new ArrayList<>();
         for (ZFrame<D, R, C> zFrame : zFrames) {
-            processedZFrames.add(zFrameProcessor.processZFrame(zFrame));
+            processedZFrames.add(processZFrame(zFrame));
         }
-        Data<D, R, C> processedOutput = getProcessedOutput(processedZFrames);
+        Data<D, R, C> processedOutput = new Data<>(processedZFrames);
         publishToExternalQueues(processedOutput);
         return processedOutput;
     }
 
-
-    public abstract Data<D, R, C> getProcessedOutput(List<ZFrame<D, R, C>> zFrames);
+    protected abstract ZFrame<D, R, C> processZFrame(ZFrame<D, R, C> zFrame) throws ZinggClientException, Exception;
 
     public void addExternalProcessingQueue(DataQueue<D, R, C> dataQueue) {
         queues.add(dataQueue);

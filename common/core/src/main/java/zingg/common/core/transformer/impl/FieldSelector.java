@@ -1,11 +1,11 @@
-package zingg.common.core.processor.impl;
+package zingg.common.core.transformer.impl;
 
 import zingg.common.client.IArguments;
 import zingg.common.client.ZFrame;
 import zingg.common.client.cols.ZidAndFieldDefSelector;
-import zingg.common.core.processor.AZFrameProcessor;
+import zingg.common.core.transformer.AZFrameTransformer;
 
-public class FieldSelector<S, D, R, C, T> extends AZFrameProcessor<D, R, C> {
+public class FieldSelector<S, D, R, C, T> extends AZFrameTransformer<D, R, C> {
 
     private final IArguments arguments;
 
@@ -14,7 +14,7 @@ public class FieldSelector<S, D, R, C, T> extends AZFrameProcessor<D, R, C> {
     }
 
     @Override
-    public ZFrame<D, R, C> processZFrame(ZFrame<D, R, C> zFrame) {
+    public ZFrame<D, R, C> transformZFrame(ZFrame<D, R, C> zFrame) {
         ZidAndFieldDefSelector zidAndFieldDefSelector = new ZidAndFieldDefSelector(arguments.getFieldDefinition());
         String[] cols = zidAndFieldDefSelector.getCols();
         return zFrame.select(cols);

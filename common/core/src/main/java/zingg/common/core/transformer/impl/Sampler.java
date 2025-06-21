@@ -1,10 +1,10 @@
-package zingg.common.core.processor.impl;
+package zingg.common.core.transformer.impl;
 
 import zingg.common.client.IArguments;
 import zingg.common.client.ZFrame;
-import zingg.common.core.processor.AZFrameProcessor;
+import zingg.common.core.transformer.AZFrameTransformer;
 
-public class Sampler<S, D, R, C, T> extends AZFrameProcessor<D, R, C> {
+public class Sampler<S, D, R, C, T> extends AZFrameTransformer<D, R, C> {
 
     private final IArguments arguments;
 
@@ -13,7 +13,7 @@ public class Sampler<S, D, R, C, T> extends AZFrameProcessor<D, R, C> {
     }
 
     @Override
-    public ZFrame<D, R, C> processZFrame(ZFrame<D, R, C> zFrame) {
+    public ZFrame<D, R, C> transformZFrame(ZFrame<D, R, C> zFrame) {
         return zFrame.sample(false, arguments.getLabelDataSampleSize());
     }
 

@@ -23,31 +23,6 @@ public abstract class Linker<S,D,R,C,T> extends Matcher<S,D,R,C,T> {
 	public Linker() {
 		setZinggOption(ZinggOptions.LINK);
 	}
-	
-	@Override
-	public ZFrame<D,R,C> selectColsFromBlocked(ZFrame<D,R,C> blocked) {
-		return blocked;
-	}
-
-	@Override
-	protected ZFrame<D,R,C> getActualDupes(ZFrame<D,R,C> blocked, ZFrame<D,R,C> testData) throws Exception, ZinggClientException{
-		PredictionFilter<D, R, C> predictionFilter = new PredictionFilter<D, R, C>();
-		return getActualDupes(blocked, testData,predictionFilter, getIPairBuilder(), null);
-	}	
-	
-	@Override
-	public IMatchOutputBuilder<S,D,R,C> getMatchOutputBuilder(){
-		if (this.matchOutputBuilder == null) {
-			this.matchOutputBuilder = new LinkOutputBuilder<S,D,R,C>(getDSUtil(), args);
-		}
-		return this.matchOutputBuilder;
-	}
-
-	public ZFrame<D,R,C> getClusterAdjustedDF(ZFrame<D, R, C> dupes) {
-		//no adjustment required here
-		//some class extending it may adjust cluster like adding guid etc
-		return dupes;
-	}
 
 	@Override
 	public IPairBuilder<S, D, R, C> getIPairBuilder(){

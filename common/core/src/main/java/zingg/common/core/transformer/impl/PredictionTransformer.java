@@ -31,7 +31,7 @@ public abstract class PredictionTransformer<S, D, R, C, T> implements IDataZFram
         return model.predict(blocks);
     }
 
-    void setModel(Model<S, T, D, R, C> model) {
+    public void setModel(Model<S, T, D, R, C> model) {
         this.model = model;
     }
 }

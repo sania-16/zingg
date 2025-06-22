@@ -18,6 +18,7 @@ public class SourceInsensitiveBlockingStrategy<S, D, R, C, T> implements IBlockC
     @Override
     public ZFrame<D, R, C> createBlocks(Data<D, R, C> data) throws Exception {
         ZFrame<D, R, C> hashedZFrame = data.getZFrameByName(ZFrameTypes.HASHED.name());
-        return context.getDSUtil().joinWithItself(hashedZFrame, ColName.HASH_COL, true);
+        ZFrame<D, R, C> pairs =  context.getDSUtil().joinWithItself(hashedZFrame, ColName.HASH_COL, true);
+        return pairs.filter(pairs.gt(ColName.ID_COL));
     }
 }

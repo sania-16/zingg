@@ -12,7 +12,7 @@ public class UncertainPairTransformer<D, R, C> extends AZFrameTransformer<D, R, 
     public static final Log LOG = LogFactory.getLog(UncertainPairTransformer.class);
 
     @Override
-    public ZFrame<D, R, C> transformZFrame(ZFrame<D, R, C> data) throws ZinggClientException, Exception {
+    public ZFrame<D, R, C> transformZFrame(ZFrame<D, R, C> data) {
         ZFrame<D,R,C> pos = data.filter(data.equalTo(ColName.PREDICTION_COL, ColValues.IS_MATCH_PREDICTION));
         pos = pos.sortAscending(ColName.SCORE_COL);
         if (LOG.isDebugEnabled()) {

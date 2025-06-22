@@ -1,15 +1,16 @@
 package zingg.common.core.transformer.map;
 
 import zingg.common.client.IArguments;
+import zingg.common.client.ZinggClientException;
 import zingg.common.core.context.Context;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public abstract class TransformerMap<S, D, R, C, T, V> {
-    private final Map<String, V> transformers;
-    private final Context<S, D, R, C, T> context;
-    private final IArguments arguments;
+    protected final Map<String, V> transformers;
+    protected final Context<S, D, R, C, T> context;
+    protected final IArguments arguments;
 
     public TransformerMap(Context<S, D, R, C, T> context, IArguments arguments) {
         this.transformers = new HashMap<>();
@@ -18,9 +19,9 @@ public abstract class TransformerMap<S, D, R, C, T, V> {
         init();
 
     }
-    public abstract void init();
+    public abstract void init() throws ZinggClientException;
 
-    V getTransformer(String name) {
+    public V getTransformer(String name) {
         return transformers.get(name);
     }
 }

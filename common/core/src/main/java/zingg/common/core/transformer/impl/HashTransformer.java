@@ -1,6 +1,7 @@
 package zingg.common.core.transformer.impl;
 
 import zingg.common.client.IArguments;
+import zingg.common.client.IZArgs;
 import zingg.common.client.ZFrame;
 import zingg.common.client.ZinggClientException;
 import zingg.common.client.cols.ZidAndFieldDefSelector;
@@ -8,13 +9,14 @@ import zingg.common.client.util.ColName;
 import zingg.common.core.block.Canopy;
 import zingg.common.core.block.Tree;
 import zingg.common.core.context.Context;
+import zingg.common.core.context.IContext;
 import zingg.common.core.preprocess.IPreprocessors;
 import zingg.common.core.transformer.ASequentialDataTransformer;
 
 public abstract class HashTransformer<S, D, R, C, T> extends ASequentialDataTransformer<S, D, R, C, T> implements IPreprocessors<S, D, R, C, T> {
 
-    private final Context<S, D, R, C, T> context;
-    private final IArguments arguments;
+    private Context<S, D, R, C, T> context;
+    private IArguments arguments;
 
     public HashTransformer(Context<S, D, R, C, T> context, IArguments arguments) {
         this.context = context;
@@ -48,6 +50,26 @@ public abstract class HashTransformer<S, D, R, C, T> extends ASequentialDataTran
         ZidAndFieldDefSelector zidAndFieldDefSelector = new ZidAndFieldDefSelector(arguments.getFieldDefinition());
         String[] cols = zidAndFieldDefSelector.getCols();
         return data.select(cols);
+    }
+
+    @Override
+    public void setContext(IContext context) {
+        this.context = (Context<S, D, R, C, T>) context;
+    }
+
+    @Override
+    public IContext getContext() {
+        return this.context;
+    }
+
+    @Override
+    public IZArgs getArgs() {
+        return this.arguments;
+    }
+
+    @Override
+    public void setArgs(IZArgs args) {
+        this.arguments = (IArguments) args;
     }
 
 }

@@ -8,17 +8,17 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.types.DataType;
 
 import zingg.common.client.ClientOptions;
+import zingg.common.client.IArguments;
 import zingg.common.client.IZArgs;
 import zingg.common.client.ZinggClientException;
 import zingg.common.client.options.ZinggOptions;
+import zingg.common.core.context.Context;
 import zingg.spark.core.context.ZinggSparkContext;
 import zingg.common.core.executor.Matcher;
-import zingg.common.core.model.Model;
-import zingg.common.core.preprocess.stopwords.StopWordsRemover;
 import org.apache.spark.sql.SparkSession;
 
 import zingg.spark.core.preprocess.ISparkPreprocMapSupplier;
-import zingg.spark.core.preprocess.stopwords.SparkStopWordsRemover;
+import zingg.spark.core.transformer.map.SparkMatcherTransformerMap;
 
 /**
  * Spark specific implementation of Matcher
@@ -45,20 +45,7 @@ public class SparkMatcher extends Matcher<SparkSession,Dataset<Row>,Row,Column,D
     public void init(IZArgs args, SparkSession s, ClientOptions options)  throws ZinggClientException {
         super.init(args,s,options);
         getContext().init(s);
+		setTransformerMap(new SparkMatcherTransformerMap((Context<SparkSession, Dataset<Row>, Row, Column, DataType>) getContext(), (IArguments) args));
     }
-	
 
-	@Override
-	public Model getModel() throws ZinggClientException {
-		Model model = getModelUtil().loadModel(false, args, getModelHelper());
-		model.register();
-		return model;
-	}
-
-	@Override
-	public StopWordsRemover<SparkSession, Dataset<Row>, Row, Column, DataType> getStopWords() {
-		return new SparkStopWordsRemover(getContext());
-	}
-
-	
 }

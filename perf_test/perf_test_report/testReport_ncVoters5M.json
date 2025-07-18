@@ -1,9 +1,18 @@
 {
+<<<<<<< HEAD
     "date": "2025-07-13",
     "time": "04:03:57",
     "test": "ncVoters_5M",
     "results": {
         "train": 1.83,
         "match": 56.61
+=======
+    "date": "2025-07-16",
+    "time": "03:35:57",
+    "test": "ncVoters_5M",
+    "results": {
+        "train": 1.83,
+        "match": 57.8
+>>>>>>> 8dac0b0396d70c2e498077ffb2a27678a303f806
     }
 }
